@@ -1,0 +1,28 @@
+[Unit]
+Description=AD Manager Flask API
+After=network.target
+
+[Service]
+User=www-data
+Group=www-data
+WorkingDirectory=/opt/ad-sistema
+# Activa el entorno virtual e inicia con gunicorn (3 workers)
+ExecStart=/opt/ad-sistema/venv/bin/gunicorn \
+    --workers 3 \
+    --bind 127.0.0.1:5000 \
+    --timeout 60 \
+    --access-logfile /var/log/ad-sistema/access.log \
+    --error-logfile  /var/log/ad-sistema/error.log \
+    app:app
+
+Restart=always
+RestartSec=5
+
+# Variables de entorno — opcional si prefieres no hardcodear en ad_helper.py
+Environment="AD_HOST=http://172.16.10.2:5985/wsman"
+Environment="AD_USER=Administrador"
+Environment="AD_PASSWORD=Eaha823"
+Environment="AD_DOMAIN=lab.local"
+
+[Install]
+WantedBy=multi-user.target
